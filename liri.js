@@ -1,19 +1,19 @@
 require('dotenv').config();
 
 var keys = require('./keys');
-var Spotify = require('node-spotify-api');
 var axios = require('axios');
 var moment = require('moment');
+var fs = require("fs");
+var Spotify = require('node-spotify-api');
+var spotify = new Spotify(keys.spotify);
+//console.log(moment());
+//console.log(process.argv);
 
-//var fs = require("fs");
-
-console.log(moment());
-console.log(process.argv);
 // Take two arguments.
 var command = process.argv[2];
-var input = process.argv[3];
-console.log(command);
-console.log(input);
+var input = process.argv.slice(3).join(" ");
+//console.log(command);
+//console.log(input);
 
 // The switch-case will direct which function gets run.
 switch (command) {
@@ -32,115 +32,133 @@ switch (command) {
   case "do-what-it-says":
     doThat();
     break;
+  default: console.log("choose a commend");
 }
 
 /*`node liri.js concert-this <artist/band name here>`*/
 
 function concertThis(artistName) {
+  if (!artistName) {
+    console.log("You must enter Artist or Band name.");
+  } else {
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
+    //console.log(queryUrl);
 
-  if (artistName === undefined) {
-    console.log("x");
-  };
+    axios.get(queryUrl).then(
+      function (response) {
 
-  var queryUrl = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
-  //console.log(queryUrl);
+        /*if (!venue) {
+          console.log("Your artist not on tour.")
+        }*/
 
-  axios.get(queryUrl).then(
-    function (response) {
+        var venue = response.data
+        //console.log(venue);
 
-      var venue = response.data
-      //console.log(venue);
+        for (var i = 0; i < venue.length; i++) {
+          var date = moment(venue[i].datetime)
 
-      for (var i = 0; i < venue.length; i++) {
+          console.log("====================Event Info==================================");
+          console.log(i);
+          console.log("Venue : " + venue[i].venue.name);
+          console.log("Venue Location : " + venue[i].venue.city + "," + venue[i].venue.country);
+          console.log("Date of the Event : " + date.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+          console.log("----------------------------------------------------------------");
+        }
 
-        var date = moment(venue[i].datetime)
-        console.log(i);
-        console.log("Venue : " + venue[i].venue.name);
-        console.log("Venue Location : " + venue[i].venue.city + "," + venue[i].venue.country);
-        console.log("Date of the Event : " + date.format("dddd, MMMM Do YYYY, h:mm:ss a"));
-        console.log("======================================================");
       }
-    }
-  );
+    );
+  }
 };
 
-/*node liri.js spotify-this-song '<song name here>'`
-    This will show the following information about the song in your terminal/bash window
-      Artist(s)
-      The song's name
-      A preview link of the song from Spotify
-      The album that the song is from
-    If no song is provided then your program will default to "The Sign" by Ace of Base.*/
-
-
-var spotify = new Spotify(keys.spotify);
-//var spotify = new Spotify(keys.spotify);
-//console.log("spotify",spotify);
-//console.log(keys.spotify);
+/*node liri.js spotify-this-song '<song name here>'`*/
 
 function spotifyThis(songName) {
-  if (songName === undefined) {
+  if (!songName) {
     songName = "The Sign"; //default Song
   }
 
-  spotify.search({ type: 'track', query: songName }, function (err, data) {
+  spotify.search({ type: "track", query: songName }, function (err, data) {
     if (err) {
-      console.log('Error occurred: ' + err);
+      console.log("Error occurred: " + err);
       return;
     }
 
     var songs = data.tracks.items;
-    console.log(songs)
-    for (var i = 0; i < songs.length; i++) {
+    //console.log(songs)
+    for (var i = 0; i <songs.length; i++) {
       console.log(i);
-      //console.log("Artist:" + songs[i].artist);
-      console.log("Song's name:" + songs[i].name);
-      console.log("Song's preview:" + songs[i].preview_url);
-      console.log("Album:" + songs[i].album.name);
+      console.log("Artist:" + songs[i].artist);
+      console.log("Song's name: " + songs[i].name);
+      console.log("Song's preview: " + songs[i].preview_url);
+      console.log("Album: " + songs[i].album.name);
       console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     }
-  });
+  }
+  );
 }
 
 /*`node liri.js movie-this '<movie name here>'` */
 
 function movieThis(movieName) {
-
-  if (movieName === undefined) {
+  if (!movieName) {
     movieName = "Mr. Nobody"; //default Movie
-    console.log(" If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/> It's on Netflix!");
+    console.log("If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/>\n" +
+      "\nIt's on Netflix!\n");
   };
 
   var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-
   //console.log(queryUrl);
 
   axios.get(queryUrl).then(
-    function (response) {
-      // console.log(response);
-      console.log("======================================================")
-      console.log("Title of the movie: " + response.data.Title);
-      console.log("Release Year: " + response.data.Year);
-      console.log("IMDB Rating: " + response.data.imdbRating);
-      console.log(response.data.Ratings[1].Source + " Rating: " + response.data.Ratings[1].input);
-      console.log("Origin Country: " + response.data.Country);
-      console.log("Language: " + response.data.Language);
-      console.log("Plot: " + response.data.Plot);
-      console.log("Actors: " + response.data.Actors);
-      console.log("======================================================");
+    function output(response) {
+      if (!response.data.Title) {
+        console.log("Check your spelling");
 
+      } else {
+        // console.log(response);
+        console.log("************************************************************************************")
+        console.log("Title of the movie: " + response.data.Title);
+        console.log("Release Year: " + response.data.Year);
+        console.log("IMDB Rating: " + response.data.imdbRating);
+        //console.log(response.data.Ratings[1].Source + " Rating: " + response.data.Ratings[1].input);
+        console.log("Origin Country: " + response.data.Country);
+        console.log("Language: " + response.data.Language);
+        console.log("Plot: " + response.data.Plot);
+        console.log("Actors: " + response.data.Actors);
+        console.log("***********************************************************************************");
+      }
     }
   );
 }
 
-/* `node liri.js do-what-it-says`
+/* `node liri.js do-what-it-says`*/
 
-   * Using the `fs` Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
+function doThat() {
 
-     * It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
+  fs.readFile("random.txt", "utf8", function (error, data) {
 
-     * Edit the text in random.txt to test out the feature for movie-this and concert-this.*/
+    // It will log the error to the console.
+    if (error) {
+      return console.log(error);
+    }
+    // Data here
+    //console.log(data);
+    var dataArr = data.split(",");
+    //console.log(dataArr);
+    //console.log(dataArr[0])
+    var newCommand = dataArr[0];
+    var newInput = dataArr[1];
 
-
+    if (newCommand === "movie-this") {
+      movieThis(newInput);
+    }
+    if (newCommand === "concert-this") {
+      concertThis(newInput)
+    }
+    if (newCommand === "spotify-this-song") {
+      spotifyThis(newInput)
+    }
+  });
+}
 
 
