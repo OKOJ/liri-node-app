@@ -1,11 +1,13 @@
-# liri-node-app
+# LIRI-NODE-APP
 LIRI will search Bands in Town for concerts, Spotify for songs and OMDB for movies.
 
 
-### Instructions
+### INSTRUCTIONS
 After downlouding LIRI run:
 
 ```npm install```
+
+#### DEMO
 
 
 ##### Each Command Should Do:
@@ -50,25 +52,19 @@ After downlouding LIRI run:
    > It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
 
 
+### TECHNOLOGIES USED
+
+     * Javascript
+     * Nodejs
+       * Node packages:
+         - Node-Spotify-API
+         - Axios 
+         - Moment
+         - DotEnv
+      * APIs used:
+        - Bands in Town
+        - OMDB
 
 
 
-
-### BONUS
-
-* In addition to logging the data to your terminal/bash window, output the data to a .txt file called `log.txt`.
-
-* Make sure you append each command you run to the `log.txt` file. 
-
-* Do not overwrite your file each time you run a command.
-
-
-
-
-
-- - -
-
-### Add To Your Portfolio
-
-After completing the homework please add the piece to your portfolio. Make sure to add a link to your updated portfolio in the comments section of your homework so the TAs can easily ensure you completed this step when they are grading the assignment. To receive an 'A' on any assignment, you must link to it from your portfolio.
-
+## :notes:	Please Enjoy!
