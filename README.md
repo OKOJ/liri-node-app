@@ -3,7 +3,7 @@ LIRI will search Bands in Town for concerts, Spotify for songs and OMDB for movi
 
 
 ### INSTRUCTIONS
-After downlouding LIRI run:
+After downloading LIRI run:
 
 ```npm install```
 
