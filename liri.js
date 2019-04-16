@@ -32,7 +32,7 @@ switch (command) {
   case "do-what-it-says":
     doThat();
     break;
-  default: console.log("choose a commend");
+  default: console.log("Type one of the command: 'concert-this','spotify-this-song','movie-this','do-what-it-says'");
 }
 
 /*`node liri.js concert-this <artist/band name here>`*/
@@ -87,7 +87,7 @@ function spotifyThis(songName) {
     //console.log(songs)
     for (var i = 0; i <songs.length; i++) {
       console.log(i);
-      console.log("Artist:" + songs[i].artist);
+      console.log("Artist:" + songs[i].artists[0].name);
       console.log("Song's name: " + songs[i].name);
       console.log("Song's preview: " + songs[i].preview_url);
       console.log("Album: " + songs[i].album.name);
@@ -120,7 +120,7 @@ function movieThis(movieName) {
         console.log("Title of the movie: " + response.data.Title);
         console.log("Release Year: " + response.data.Year);
         console.log("IMDB Rating: " + response.data.imdbRating);
-        //console.log(response.data.Ratings[1].Source + " Rating: " + response.data.Ratings[1].input);
+        console.log(response.data.Ratings[1].Source + " Rating: " + response.data.Ratings[1].Value);
         console.log("Origin Country: " + response.data.Country);
         console.log("Language: " + response.data.Language);
         console.log("Plot: " + response.data.Plot);
